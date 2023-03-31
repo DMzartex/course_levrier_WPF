@@ -13,6 +13,11 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
+using System.Windows.Threading;
+
+
+
+
 namespace ACT7_CourseLevriers
 {
     /// <summary>
@@ -20,6 +25,8 @@ namespace ACT7_CourseLevriers
     /// </summary>
     public partial class MainWindow : Window
     {
+        Chien[] chienPlateau = new Chien[4];
+        Image[] plateauImageChien = new Image[4];
         public MainWindow()
         {
             InitializeComponent();
@@ -28,10 +35,11 @@ namespace ACT7_CourseLevriers
 
         public void setupPlateau()
         {
+
             // Création d'un bitmapImage
             BitmapImage imagePlateau = new BitmapImage();
             imagePlateau.BeginInit();
-            imagePlateau.UriSource = new Uri("C:\\Users\\Doria\\Desktop\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\racetrack.png", UriKind.Relative);
+            imagePlateau.UriSource = new Uri("C:\\Users\\Doria\\Desktop\\Cours\\Programmation\\Programmation_6TI\\WPF\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\racetrack.png", UriKind.Relative);
             imagePlateau.EndInit();
 
             // création d'une image de fond
@@ -41,7 +49,6 @@ namespace ACT7_CourseLevriers
             Canvas canvasPrincipal = new Canvas();
             canvasPrincipal.Background = brushFond;
 
-            Chien[] chiensPlateau = new Chien[4];
             int positionLeft = 60;
             int positionTop = 20;
 
@@ -51,18 +58,18 @@ namespace ACT7_CourseLevriers
                 {
                     positionTop = positionTop + 90;
                 }
-                Chien chien = new Chien(i,positionTop,positionLeft);
+                chienPlateau[i] = new Chien(i,positionTop,positionLeft);
                 BitmapImage imageChien = new BitmapImage();
                 imageChien.BeginInit();
-                imageChien.UriSource = new Uri("C:\\Users\\Doria\\Desktop\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\dog.png", UriKind.RelativeOrAbsolute);
+                imageChien.UriSource = new Uri("C:\\Users\\Doria\\Desktop\\Cours\\Programmation\\Programmation_6TI\\WPF\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\dog.png", UriKind.RelativeOrAbsolute);
                 imageChien.EndInit();
 
-                Image monImage = new Image();
-                monImage.Source = imageChien;
-                monImage.Stretch = System.Windows.Media.Stretch.None;
-                Canvas.SetLeft(monImage, chien.PositionLeft);
-                Canvas.SetTop(monImage, chien.PositionTop);
-                canvasPrincipal.Children.Add(monImage);
+                plateauImageChien[i] = new Image();
+                plateauImageChien[i].Source = imageChien;
+                plateauImageChien[i].Stretch = System.Windows.Media.Stretch.None;
+                Canvas.SetLeft(plateauImageChien[i], chienPlateau[i].PositionLeft);
+                Canvas.SetTop(plateauImageChien[i], chienPlateau[i].PositionTop);
+                canvasPrincipal.Children.Add(plateauImageChien[i]);
             }
 
 
@@ -200,7 +207,8 @@ namespace ACT7_CourseLevriers
             startRace.VerticalAlignment= VerticalAlignment.Top;
             startRace.Width = 200;
             startRace.Height= 30;
-         
+            startRace.Name = "btnPlay";
+            startRace.Click += new RoutedEventHandler(BtnPlay_click);
             stackStartPari.Children.Add(txtBNameUser);
             stackStartPari.Children.Add(startParis);
             stackStartPari.Children.Add(txtMise);
@@ -225,6 +233,27 @@ namespace ACT7_CourseLevriers
             gridJeu.Children.Add(btnReset);
 
 
+        }
+
+        private void BtnPlay_click(object sender, RoutedEventArgs e)
+        {
+            System.Timers.Timer timer = new System.Timers.Timer();
+            timer.Interval = 1000; // une seconde
+            timer.Elapsed += (sender, args) =>
+            {
+                // Modifier la position de l'image
+                Dispatcher.Invoke(() =>
+                {
+                    for(int i = 0; i < 4; i++)
+                    {
+                        double currentLeft = Canvas.GetLeft(plateauImageChien[i]);
+                        Canvas.SetLeft(plateauImageChien[i], currentLeft + 40);
+                    }
+                });
+            };
+            
+            // Démarrer le timer
+            timer.Start();
         }
     }
 }
