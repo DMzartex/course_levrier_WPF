@@ -1,8 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "dOhQ4LeX1zf364cqxXdIguBRPIuWL4xd0/fFAkDgSyFsNnmfo4+nRxk/45fsBddJWIROy1IySGP8FbMI6RcXzg==",
+  "dgSpecHash": "OB4PDpWVHoBAPboiP6cKDF3SpR+CgRDOuejUILokd/n76Rvvs+6blXviIMawa2WiCxvpPt+J0N3IdN04iyA1uw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Doria\\Desktop\\Cours\\Programmation\\Programmation_6TI\\WPF\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\ACT7_CourseLevriers.csproj",
-  "expectedPackageFiles": [],
+  "projectFilePath": "C:\\Users\\Doria\\Desktop\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\ACT7_CourseLevriers.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\Doria\\.nuget\\packages\\microsoft.netcore.app.host.win-x64\\3.1.31\\microsoft.netcore.app.host.win-x64.3.1.31.nupkg.sha512"
+  ],
   "logs": []
 }

@@ -27,19 +27,32 @@ namespace ACT7_CourseLevriers
     {
         Chien[] chienPlateau = new Chien[4];
         Image[] plateauImageChien = new Image[4];
+        User[] Players = new User[3];
+        TextBlock[] txtBinfoPlayer = new TextBlock[3];
+        TextBlock txtBNameUser = new TextBlock();
+        string NamePlayerSelect = "";
+        
         public MainWindow()
         {
             InitializeComponent();
+            CreatePlayer();
             setupPlateau();
+        }
+
+        public void CreatePlayer()
+        {
+            for(int p = 0; p < Players.Length; p++)
+            {
+                Players[p] = new User(p.ToString(),500);
+            }
         }
 
         public void setupPlateau()
         {
-
             // Création d'un bitmapImage
             BitmapImage imagePlateau = new BitmapImage();
             imagePlateau.BeginInit();
-            imagePlateau.UriSource = new Uri("C:\\Users\\Doria\\Desktop\\Cours\\Programmation\\Programmation_6TI\\WPF\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\racetrack.png", UriKind.Relative);
+            imagePlateau.UriSource = new Uri("C:\\Users\\Doria\\Desktop\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\racetrack.png", UriKind.Relative);
             imagePlateau.EndInit();
 
             // création d'une image de fond
@@ -61,9 +74,8 @@ namespace ACT7_CourseLevriers
                 chienPlateau[i] = new Chien(i,positionTop,positionLeft);
                 BitmapImage imageChien = new BitmapImage();
                 imageChien.BeginInit();
-                imageChien.UriSource = new Uri("C:\\Users\\Doria\\Desktop\\Cours\\Programmation\\Programmation_6TI\\WPF\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\dog.png", UriKind.RelativeOrAbsolute);
+                imageChien.UriSource = new Uri("C:\\Users\\Doria\\Desktop\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\dog.png", UriKind.RelativeOrAbsolute);
                 imageChien.EndInit();
-
                 plateauImageChien[i] = new Image();
                 plateauImageChien[i].Source = imageChien;
                 plateauImageChien[i].Stretch = System.Windows.Media.Stretch.None;
@@ -121,12 +133,13 @@ namespace ACT7_CourseLevriers
             stackSelectPlayer.Children.Add(txtBInfoMise);
             
             RadioButton[] radioButtonPlayer = new RadioButton[3];
-            TextBlock[] txtBinfoPlayer = new TextBlock[3];
+            
             for(int i = 0; i < 3; i++)
             {
                 radioButtonPlayer[i] = new RadioButton();
+                radioButtonPlayer[i].Checked += new RoutedEventHandler(namePlayer_Check);
                 txtBinfoPlayer[i] = new TextBlock();
-                txtBinfoPlayer[i].Text = i.ToString();
+                txtBinfoPlayer[i].Text = Players[i].Name;
                 txtBinfoPlayer[i].FontSize = 20;
                 radioButtonPlayer[i].Content = txtBinfoPlayer[i];
                 stackSelectPlayer.Children.Add(radioButtonPlayer[i]);
@@ -166,10 +179,9 @@ namespace ACT7_CourseLevriers
             stackStartPari.Orientation= Orientation.Horizontal;
             stackStartPari.Margin = new Thickness(10, 20, 0, 0);
 
-            TextBlock txtBNameUser = new TextBlock();
+            
             txtBNameUser.FontWeight= FontWeights.Bold;
             txtBNameUser.FontSize = 20;
-            txtBNameUser.Text= "Dorian";
             txtBNameUser.Margin = new Thickness(10,0,0,0);
 
             Button startParis = new Button();
@@ -237,23 +249,42 @@ namespace ACT7_CourseLevriers
 
         private void BtnPlay_click(object sender, RoutedEventArgs e)
         {
+            
             System.Timers.Timer timer = new System.Timers.Timer();
+            timer.Start();
             timer.Interval = 1000; // une seconde
             timer.Elapsed += (sender, args) =>
             {
                 // Modifier la position de l'image
                 Dispatcher.Invoke(() =>
                 {
-                    for(int i = 0; i < 4; i++)
+                    for(int i = 0; i < plateauImageChien.Length; i++)
                     {
+                        Random random = new Random();
+                        // Vitesse du chien
+                        int vitesseChien = random.Next(3,5) * 10;
                         double currentLeft = Canvas.GetLeft(plateauImageChien[i]);
-                        Canvas.SetLeft(plateauImageChien[i], currentLeft + 40);
+                        //Changer la position de l'image
+                        Canvas.SetLeft(plateauImageChien[i], currentLeft + vitesseChien);
+                        // Changer la position du chien
+                        chienPlateau[i].PositionLeft += vitesseChien;
+                        for (int y = 0; y < chienPlateau.Length; y++)
+                        {
+                            // Verifier si le chien passe la ligne d'arrivé
+                            if (chienPlateau[y].PositionLeft >= 690)
+                            {
+                                timer.Stop();
+                            }
+                        }
                     }
                 });
             };
-            
-            // Démarrer le timer
-            timer.Start();
+           
+        }
+
+        private void namePlayer_Check(object sender, EventArgs e)
+        {
+            txtBNameUser.Text = txtBinfoPlayer[2].Text ;
         }
     }
 }
