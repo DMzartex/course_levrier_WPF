@@ -45,6 +45,8 @@ namespace ACT7_CourseLevriers
         Pari[] parisEnJeu = new Pari[3];
         // Tableau des informations sur le placement des paris
         TextBlock[] infosPlacementParis = new TextBlock[3];
+        // numéro du chien qui à gagné la course
+        int numberChienWin;
 
         public MainWindow()
         {
@@ -66,7 +68,7 @@ namespace ACT7_CourseLevriers
             // Création d'un bitmapImage
             BitmapImage imagePlateau = new BitmapImage();
             imagePlateau.BeginInit();
-            imagePlateau.UriSource = new Uri("C:\\Users\\Doria\\Desktop\\Cours\\Programmation\\Programmation_6TI\\WPF\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\racetrack.png", UriKind.Relative);
+            imagePlateau.UriSource = new Uri("C:\\Users\\Doria\\Desktop\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\racetrack.png", UriKind.Relative);
             imagePlateau.EndInit();
 
             // création d'une image de fond
@@ -88,7 +90,7 @@ namespace ACT7_CourseLevriers
                 chienPlateau[i] = new Chien(i,positionTop,positionLeft);
                 BitmapImage imageChien = new BitmapImage();
                 imageChien.BeginInit();
-                imageChien.UriSource = new Uri("C:\\Users\\Doria\\Desktop\\Cours\\Programmation\\Programmation_6TI\\WPF\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\dog.png", UriKind.RelativeOrAbsolute);
+                imageChien.UriSource = new Uri("C:\\Users\\Doria\\Desktop\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\dog.png", UriKind.RelativeOrAbsolute);
                 imageChien.EndInit();
                 plateauImageChien[i] = new Image();
                 plateauImageChien[i].Source = imageChien;
@@ -148,7 +150,7 @@ namespace ACT7_CourseLevriers
             
             RadioButton[] radioButtonPlayer = new RadioButton[3];
             
-            for(int i = 0; i < 3; i++)
+            for(int i = 0; i < radioButtonPlayer.Length; i++)
             {
                 radioButtonPlayer[i] = new RadioButton();
                 radioButtonPlayer[i].Name = "rB_"+i.ToString();
@@ -267,33 +269,74 @@ namespace ACT7_CourseLevriers
             System.Timers.Timer timer = new System.Timers.Timer();
             timer.Start();
             timer.Interval = 1000; // une seconde
-            timer.Elapsed += (sender, args) =>
+            bool play = true;
+            for(int y = 0; y < infosPlacementParis.Length; y++)
             {
-                // Modifier la position de l'image
-                Dispatcher.Invoke(() =>
+                if (infosPlacementParis[y].Text == "")
                 {
-                    for(int i = 0; i < plateauImageChien.Length; i++)
+                    play = false;
+                }
+            }
+
+            if (play)
+            {
+                timer.Elapsed += (sender, args) =>
+                {
+                    // Modifier la position de l'image
+                    Dispatcher.Invoke(() =>
                     {
-                        Random random = new Random();
-                        // Vitesse du chien
-                        int vitesseChien = random.Next(3,5) * 10;
-                        double currentLeft = Canvas.GetLeft(plateauImageChien[i]);
-                        //Changer la position de l'image
-                        Canvas.SetLeft(plateauImageChien[i], currentLeft + vitesseChien);
-                        // Changer la position du chien
-                        chienPlateau[i].PositionLeft += vitesseChien;
-                        for (int y = 0; y < chienPlateau.Length; y++)
+                        for (int i = 0; i < chienPlateau.Length; i++)
                         {
-                            // Verifier si le chien passe la ligne d'arrivé
-                            if (chienPlateau[y].PositionLeft >= 690)
+                            Random random = new Random();
+                            // Vitesse du chien
+                            int vitesseChien = random.Next(3, 5) * 10;
+                            double currentLeft = Canvas.GetLeft(plateauImageChien[i]);
+                            //Changer la position de l'image
+                            Canvas.SetLeft(plateauImageChien[i], currentLeft + vitesseChien);
+                            // Changer la position du chien
+                            chienPlateau[i].PositionLeft += vitesseChien;
+                            for (int y = 0; y < chienPlateau.Length; y++)
                             {
-                                timer.Stop();
+                                // Verifier si le chien passe la ligne d'arrivé
+                                if (chienPlateau[y].PositionLeft >= 690)
+                                {
+                                    timer.Stop();
+                                    double maxPositionLeft = 0;
+                                    for(int c = 0; c < chienPlateau.Length; c++)
+                                    {
+                                        double positionLeftChien = chienPlateau[c].PositionLeft;
+                                        if (positionLeftChien > maxPositionLeft)
+                                        {
+                                            maxPositionLeft = positionLeftChien;
+                                            numberChienWin = chienPlateau[c].Number;
+                                        }
+                                    }
+
+                                    for(int u = 0; u < parisEnJeu.Length; u++)
+                                    {
+                                        if (parisEnJeu[u].NumberChien == numberChienWin)
+                                        {
+                                            for(int t = 0; t < Players.Length; t++)
+                                            {
+                                                if (parisEnJeu[u].NameJoueur == Players[t].Name)
+                                                {
+                                                    int sommeWin = parisEnJeu[u].Somme * 2;
+                                                    Players[t].Monnaie += sommeWin;
+
+                                                    txtBinfoPlayer[t].Text = Players[t].Name + " possède " + Players[t].Monnaie;
+
+                                                }
+                                            }
+                                        }                       
+                                    
+                                    }
+
+                                }
                             }
                         }
-                    }
-                });
-            };
-           
+                    });
+                };
+            }
         }
 
         private void namePlayer_Check(object sender, EventArgs e)
@@ -311,14 +354,23 @@ namespace ACT7_CourseLevriers
             {
                 if (Int32.TryParse(txtMise.Text, out int sommeMise))
                 {
-                    if (Players[numberPlayerSelect].Monnaie > sommeMise)
+                    if (Players[numberPlayerSelect].Monnaie >= sommeMise)
                     {
                         for (int p = 0; p < chienPlateau.Length; p++)
                         {
                             if (chienPlateau[p].Number == int.Parse(txtNmbrChien.Text))
                             {
-                                parisEnJeu[numberPlayerSelect] = new Pari(sommeMise, Players[numberPlayerSelect].Name, chienPlateau[p].Number);
-                                infosPlacementParis[numberPlayerSelect].Text = Players[numberPlayerSelect].Name + " à parier sur le chien " + txtNmbrChien;
+                                // Verifié si le joueurs n'a pas déja placé un pari
+                                if (infosPlacementParis[numberPlayerSelect].Text == "")
+                                {
+                                    parisEnJeu[numberPlayerSelect] = new Pari(sommeMise, Players[numberPlayerSelect].Name, chienPlateau[p].Number);
+                                    Players[numberPlayerSelect].Monnaie -= sommeMise;
+                                    for(int i = 0; i < txtBinfoPlayer.Length; i++)
+                                    {
+                                        txtBinfoPlayer[i].Text = Players[i].Name + " possède " + Players[i].Monnaie;
+                                    }
+                                    infosPlacementParis[numberPlayerSelect].Text = Players[numberPlayerSelect].Name + " à parier sur le chien " + txtNmbrChien.Text;
+                                }
                             }
                         }
                     }

@@ -1,6 +1,26 @@
-﻿using System;
+﻿//using System;
+//using System.Collections.Generic;
+//using System.Text;
+//using System.Threading;
+//using System.Windows.Controls;
+//using System.Windows.Threading;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Threading.Tasks;
+using System.Windows;
+using System.Windows.Controls;
+using System.Windows.Data;
+using System.Windows.Documents;
+using System.Windows.Input;
+using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
+using System.Windows.Shapes;
+using System.Diagnostics;
+using System.Windows.Threading;
+
 
 namespace ACT7_CourseLevriers
 {
@@ -36,11 +56,5 @@ namespace ACT7_CourseLevriers
 			this._positionTop = positionTop;
 			this._positionLeft = positionLeft;
 		}
-
-		// faire les fonctions de jeux
-
-
-
-
-	}
+    }
 }
