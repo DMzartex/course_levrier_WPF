@@ -12,7 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-
+using System.Diagnostics;
 using System.Windows.Threading;
 
 
@@ -25,13 +25,27 @@ namespace ACT7_CourseLevriers
     /// </summary>
     public partial class MainWindow : Window
     {
+        // tableau des chiens participant à la course
         Chien[] chienPlateau = new Chien[4];
+        // tableau des images de chiens sur le plateau
         Image[] plateauImageChien = new Image[4];
+        // tableau des joueurs participant à la course
         User[] Players = new User[3];
+        // TextBlock contenant les informations pour les radioButton
         TextBlock[] txtBinfoPlayer = new TextBlock[3];
+        // TextBlock pour l'affichage du nom du joueur selectionné
         TextBlock txtBNameUser = new TextBlock();
-        string NamePlayerSelect = "";
-        
+        // numéro du joueur séléctionné
+        int numberPlayerSelect;
+        // Textbox pour la mise 
+        TextBox txtMise = new TextBox();
+        // TextBlock du numéro du chien du pari
+        TextBox txtNmbrChien = new TextBox();
+        // Tableau des paris sur la course
+        Pari[] parisEnJeu = new Pari[3];
+        // Tableau des informations sur le placement des paris
+        TextBlock[] infosPlacementParis = new TextBlock[3];
+
         public MainWindow()
         {
             InitializeComponent();
@@ -43,7 +57,7 @@ namespace ACT7_CourseLevriers
         {
             for(int p = 0; p < Players.Length; p++)
             {
-                Players[p] = new User(p.ToString(),500);
+                Players[p] = new User("Player_"+ p.ToString(),500);
             }
         }
 
@@ -52,7 +66,7 @@ namespace ACT7_CourseLevriers
             // Création d'un bitmapImage
             BitmapImage imagePlateau = new BitmapImage();
             imagePlateau.BeginInit();
-            imagePlateau.UriSource = new Uri("C:\\Users\\Doria\\Desktop\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\racetrack.png", UriKind.Relative);
+            imagePlateau.UriSource = new Uri("C:\\Users\\Doria\\Desktop\\Cours\\Programmation\\Programmation_6TI\\WPF\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\racetrack.png", UriKind.Relative);
             imagePlateau.EndInit();
 
             // création d'une image de fond
@@ -74,7 +88,7 @@ namespace ACT7_CourseLevriers
                 chienPlateau[i] = new Chien(i,positionTop,positionLeft);
                 BitmapImage imageChien = new BitmapImage();
                 imageChien.BeginInit();
-                imageChien.UriSource = new Uri("C:\\Users\\Doria\\Desktop\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\dog.png", UriKind.RelativeOrAbsolute);
+                imageChien.UriSource = new Uri("C:\\Users\\Doria\\Desktop\\Cours\\Programmation\\Programmation_6TI\\WPF\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\dog.png", UriKind.RelativeOrAbsolute);
                 imageChien.EndInit();
                 plateauImageChien[i] = new Image();
                 plateauImageChien[i].Source = imageChien;
@@ -137,9 +151,10 @@ namespace ACT7_CourseLevriers
             for(int i = 0; i < 3; i++)
             {
                 radioButtonPlayer[i] = new RadioButton();
+                radioButtonPlayer[i].Name = "rB_"+i.ToString();
                 radioButtonPlayer[i].Checked += new RoutedEventHandler(namePlayer_Check);
                 txtBinfoPlayer[i] = new TextBlock();
-                txtBinfoPlayer[i].Text = Players[i].Name;
+                txtBinfoPlayer[i].Text = Players[i].Name + " possède " + Players[i].Monnaie;
                 txtBinfoPlayer[i].FontSize = 20;
                 radioButtonPlayer[i].Content = txtBinfoPlayer[i];
                 stackSelectPlayer.Children.Add(radioButtonPlayer[i]);
@@ -161,12 +176,10 @@ namespace ACT7_CourseLevriers
 
             stackInfoPari.Children.Add(txtBParis);
 
-            TextBlock[] infosPlacementParis = new TextBlock[3];
 
             for(int i = 0; i < infosPlacementParis.Length; i++)
             {
                 infosPlacementParis[i] = new TextBlock();
-                infosPlacementParis[i].Text = i.ToString();
                 infosPlacementParis[i].FontSize = 20;
                 stackInfoPari.Children.Add(infosPlacementParis[i]);
             }
@@ -191,8 +204,9 @@ namespace ACT7_CourseLevriers
             startParis.Height = 30;
             startParis.VerticalAlignment = VerticalAlignment.Top;
             startParis.Margin = new Thickness(20, 0, 0, 0);
+            startParis.Click += StartParis_Click;
+
             
-            TextBox txtMise = new TextBox();
             txtMise.VerticalAlignment= VerticalAlignment.Top;
             txtMise.Height= 30;
             txtMise.Width= 50;
@@ -205,7 +219,6 @@ namespace ACT7_CourseLevriers
             txtBTextmiseChien.FontWeight= FontWeights.Bold;
             txtBTextmiseChien.Margin = new Thickness(20, 0, 0, 0);
 
-            TextBox txtNmbrChien = new TextBox();
             txtNmbrChien.VerticalAlignment= VerticalAlignment.Top;
             txtNmbrChien.Margin = new Thickness(20,0,0,0);
             txtNmbrChien.Height= 30;
@@ -247,6 +260,7 @@ namespace ACT7_CourseLevriers
 
         }
 
+      
         private void BtnPlay_click(object sender, RoutedEventArgs e)
         {
             
@@ -284,7 +298,32 @@ namespace ACT7_CourseLevriers
 
         private void namePlayer_Check(object sender, EventArgs e)
         {
-            txtBNameUser.Text = txtBinfoPlayer[2].Text ;
+            string nameRB = ((RadioButton)(sender)).Name;
+            string[] tabNumRB = new string[2];
+            tabNumRB = nameRB.Split("_");
+            txtBNameUser.Text = Players[int.Parse(tabNumRB[1])].Name;
+            numberPlayerSelect = int.Parse(tabNumRB[1]);
+        }
+
+        private void StartParis_Click(object sender, RoutedEventArgs e)
+        {
+            if (txtBNameUser.Text != "")
+            {
+                if (Int32.TryParse(txtMise.Text, out int sommeMise))
+                {
+                    if (Players[numberPlayerSelect].Monnaie > sommeMise)
+                    {
+                        for (int p = 0; p < chienPlateau.Length; p++)
+                        {
+                            if (chienPlateau[p].Number == int.Parse(txtNmbrChien.Text))
+                            {
+                                parisEnJeu[numberPlayerSelect] = new Pari(sommeMise, Players[numberPlayerSelect].Name, chienPlateau[p].Number);
+                                infosPlacementParis[numberPlayerSelect].Text = Players[numberPlayerSelect].Name + " à parier sur le chien " + txtNmbrChien;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 }

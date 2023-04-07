@@ -14,11 +14,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Doria\\Desktop\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\ACT7_CourseLevriers.csproj",
+      "projectUniqueName": "C:\\Users\\Doria\\Desktop\\Cours\\Programmation\\Programmation_6TI\\WPF\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\ACT7_CourseLevriers.csproj",
       "projectName": "ACT7_CourseLevriers",
-      "projectPath": "C:\\Users\\Doria\\Desktop\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\ACT7_CourseLevriers.csproj",
+      "projectPath": "C:\\Users\\Doria\\Desktop\\Cours\\Programmation\\Programmation_6TI\\WPF\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\ACT7_CourseLevriers.csproj",
       "packagesPath": "C:\\Users\\Doria\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Doria\\Desktop\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\obj\\",
+      "outputPath": "C:\\Users\\Doria\\Desktop\\Cours\\Programmation\\Programmation_6TI\\WPF\\course_levrier_WPF\\ACT7_CourseLevriers\\ACT7_CourseLevriers\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -62,12 +62,6 @@
         ],
         "assetTargetFallback": true,
         "warn": true,
-        "downloadDependencies": [
-          {
-            "name": "Microsoft.NETCore.App.Host.win-x64",
-            "version": "[3.1.31, 3.1.31]"
-          }
-        ],
         "frameworkReferences": {
           "Microsoft.NETCore.App": {
             "privateAssets": "all"
@@ -76,7 +70,7 @@
             "privateAssets": "none"
           }
         },
-        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.100\\RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\6.0.400\\RuntimeIdentifierGraph.json"
       }
     }
   }
